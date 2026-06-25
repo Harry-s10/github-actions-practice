@@ -21,3 +21,10 @@ jobs:
 
       - name: Run tests
         run: uv run pytest
+
+      - name: Print runtime context
+        run: |
+          echo "Triggered by ${{ github.actor }}"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Event: ${{ github.event_name }}"
+          echo "Token exists: ${{ secrets.GITHUB_TOKEN != '' }}"
