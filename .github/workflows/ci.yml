@@ -6,13 +6,13 @@ on:
   pull_request:
 
 env:
-  APP_ENV: production # workflow-level var
+  APP_ENV: production
 
 jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      LOG_LEVEL: debug # job-level var
+      LOG_LEVEL: debug
 
     steps:
       - uses: actions/checkout@v5
@@ -32,8 +32,7 @@ jobs:
 
       - name: Run tests
         env:
-          PYTHONPATH: src # step-level var
-          API_KEY: ${{ secrets.MY_API_KEY }}
+          PYTHONPATH: src
         run: uv run pytest --html=report.html
 
       - name: Upload test report
@@ -42,3 +41,18 @@ jobs:
         with:
           name: test-report-${{ steps.build.outputs.tag }}
           path: report.html
+
+  deploy-staging:
+    runs-on: ubuntu-latest
+    needs: test # only runs if test job passes
+    environment: staging # pulls secrets/vars from staging environment
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Print staging config
+        run: |
+          echo "Environment: ${{ vars.APP_ENV }}"
+          echo "Database URL exists: ${{ secrets.DATABASE_URL != '' }}"
+          echo "Deployed by: ${{ github.actor }}"
+          echo "Commit: ${{ github.sha }}"
