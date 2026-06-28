@@ -1,58 +1,62 @@
 name: CI
 
 on:
-  push:
-    branches: [main]
-  pull_request:
+    push:
+        branches: [main]
+    pull_request:
 
 env:
-  APP_ENV: production
+    APP_ENV: production
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    env:
-      LOG_LEVEL: debug
-
-    steps:
-      - uses: actions/checkout@v5
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v5
-        with:
-          enable-caching: true
-          cache-dependency-glob: 'uv.lock'
-
-      - name: Install dependencies
-        run: uv sync --all-extras --dev
-
-      - name: Generate build tag
-        id: build
-        run: echo "tag=build-${{ github.sha }}" >> $GITHUB_OUTPUT
-
-      - name: Run tests
+    test:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                python-version: ['3.12', '3.13', '3.14']
         env:
-          PYTHONPATH: src
-        run: uv run pytest --html=report.html
+            LOG_LEVEL: debug
 
-      - name: Upload test report
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: test-report-${{ steps.build.outputs.tag }}
-          path: report.html
+        steps:
+            - uses: actions/checkout@v5
 
-  deploy-staging:
-    runs-on: ubuntu-latest
-    needs: test # only runs if test job passes
-    environment: staging # pulls secrets/vars from staging environment
+            - name: Install uv
+              uses: astral-sh/setup-uv@v5
+              with:
+                  enable-caching: true
+                  cache-dependency-glob: 'uv.lock'
+                  python-version: ${{ matrix.python-version }}
 
-    steps:
-      - uses: actions/checkout@v5
+            - name: Install dependencies
+              run: uv sync --all-extras --dev
 
-      - name: Print staging config
-        run: |
-          echo "Environment: ${{ vars.APP_ENV }}"
-          echo "Database URL exists: ${{ secrets.DATABASE_URL != '' }}"
-          echo "Deployed by: ${{ github.actor }}"
-          echo "Commit: ${{ github.sha }}"
+            - name: Generate build tag
+              id: build
+              run: echo "tag=build-${{ github.sha }}" >> $GITHUB_OUTPUT
+
+            - name: Run tests
+              env:
+                  PYTHONPATH: src
+              run: uv run pytest --html=report.html
+
+            - name: Upload test report
+              uses: actions/upload-artifact@v4
+              if: always()
+              with:
+                  name: test-report-${{ steps.build.outputs.tag }}
+                  path: report.html
+
+    deploy-staging:
+        runs-on: ubuntu-latest
+        needs: test # only runs if test job passes
+        environment: staging # pulls secrets/vars from staging environment
+
+        steps:
+            - uses: actions/checkout@v5
+
+            - name: Print staging config
+              run: |
+                  echo "Environment: ${{ vars.APP_ENV }}"
+                  echo "Database URL exists: ${{ secrets.DATABASE_URL != '' }}"
+                  echo "Deployed by: ${{ github.actor }}"
+                  echo "Commit: ${{ github.sha }}"
