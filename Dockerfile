@@ -9,7 +9,7 @@ RUN uv sync --no-dev --frozen --no-install-project
 
 COPY src/ ./src/
 
-RUN uv sync --no-dev --frozen
+RUN uv sync --no-dev --frozen --verbose
 
 EXPOSE 8000
 
