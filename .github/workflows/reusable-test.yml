@@ -39,5 +39,5 @@ jobs:
               uses: actions/upload-artifact@v7.0.1
               if: always()
               with:
-                  name: test-reports-${{ steps.build.output.tag }}
+                  name: test-reports-${{ steps.build.outputs.tag }}
                   path: report.html
