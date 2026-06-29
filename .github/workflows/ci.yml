@@ -10,37 +10,52 @@ env:
 jobs:
     test:
         runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                python-version: ['3.12', '3.13', '3.14']
-        env:
-            LOG_LEVEL: debug
+        # strategy:
+        #     matrix:
+        #         python-version: ['3.12', '3.13', '3.14']
+        # env:
+        #     LOG_LEVEL: debug
 
         steps:
             - name: Checkout
               uses: actions/checkout@v7.0.0
 
-            - name: Create the runner
-              uses: ./.github/actions/setup-python-env
-              with:
-                  python-version: ${{ matrix.python-version }}
+            # - name: Create the runner
+            #   uses: ./.github/actions/setup-python-env
+            #   with:
+            #       python-version: ${{ matrix.python-version }}
 
-            - name: Generate build tag
-              id: build
-              run: echo "tag=build-${{ github.sha }}" >> $GITHUB_OUTPUT
+            # - name: Generate build tag
+            #   id: build
+            #   run: echo "tag=build-${{ github.sha }}" >> $GITHUB_OUTPUT
+
+            - name: install uv
+              uses: astral-sh/setup-uv@8.2.0
+              with:
+                  enable-cache: true
+                  cache-dependency-glob: 'uv.lock'
+
+            - name: install dependencies
+              run: uv sync --all-extras --dev
+
+            - name: run ruff lint
+              run: uv run ruff check .
+
+            - name: run ruff format check
+              run: uv run ruff format --check .
 
             - name: Run tests
               env:
                   PYTHONPATH: src
               run: uv run pytest --html=report.html
 
-            - name: Upload test report
-              uses: actions/upload-artifact@v7.0.1
+            # - name: Upload test report
+            #   uses: actions/upload-artifact@v7.0.1
 
-              if: always()
-              with:
-                  name: test-report-${{ steps.build.outputs.tag }}
-                  path: report.html
+            #   if: always()
+            #   with:
+            #       name: test-report-${{ steps.build.outputs.tag }}
+            #       path: report.html
 
     deploy-staging:
         runs-on: ubuntu-latest
