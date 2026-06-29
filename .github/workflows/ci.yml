@@ -45,7 +45,7 @@ jobs:
               run: uv run pytest --html=report.html --cov=src --cov-report=term-missing
 
             - name: upload test report
-              uses: actions/upload-artifacts@v7.0.1
+              uses: actions/upload-artifact@v7.0.1
               if: always()
               with:
                   name: test-report-${{ matrix.python-version }}-${{ github.sha }}
@@ -61,14 +61,14 @@ jobs:
             - uses: action/checkout@7.0.0
 
             - name: log into GHCR
-              uses: docker/login-action@v
+              uses: docker/login-action@v4.2.0
               with:
                   registry: ghcr.io
                   username: ${{ github.actor }}
                   password: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Build and push image
-              uses: docker/build-push-action@v
+              uses: docker/build-push-action@v7
               with:
                   context: .
                   push: true
