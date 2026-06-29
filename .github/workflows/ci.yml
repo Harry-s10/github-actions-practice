@@ -18,7 +18,7 @@ jobs:
 
         steps:
             - name: Create the runner
-              uses: ./.github/actions/setup-python-env
+              uses: .github/actions/setup-python-env
               with:
                   python-version: '3.14'
 
