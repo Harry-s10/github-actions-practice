@@ -30,7 +30,7 @@ jobs:
             #   run: echo "tag=build-${{ github.sha }}" >> $GITHUB_OUTPUT
 
             - name: install uv
-              uses: astral-sh/setup-uv@8.2.0
+              uses: astral-sh/setup-uv@v8.2.0
               with:
                   enable-cache: true
                   cache-dependency-glob: 'uv.lock'
