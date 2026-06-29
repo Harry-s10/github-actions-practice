@@ -18,6 +18,10 @@ jobs:
         steps:
             - uses: actions/checkout@v7.0.0
 
+            - name: generate tag
+              id: build
+              run: echo "tag=build-${{ github.sha }}" >> $GITHUB_OUTPUT
+            
             - name: install uv
               uses: astral-sh/setup-uv@v8.2.0
               with:
@@ -29,4 +33,11 @@ jobs:
               run: uv sync --all-extras --dev
 
             - name: Run tests
-              run: uv run pytest
+              run: uv run pytest --html=report.html
+
+            - name: upload artifacts
+              uses: action/upload-artifacts@v7.0.2
+              if: always()
+              with:
+                   name: test-reports-${{ step.build.output.tag }}
+                   path: report.html
