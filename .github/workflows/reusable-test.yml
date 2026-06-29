@@ -18,8 +18,8 @@ jobs:
         steps:
             - uses: actions/checkout@v7.0.0
 
-            - name: Install uv
-              uses: astral-sh/setup-uv@v.8.2.0
+            - name: install uv
+              uses: astral-sh/setup-uv@v8.2.0
               with:
                   enable-caching: true
                   cache-dependency-glob: 'uv.lock'
