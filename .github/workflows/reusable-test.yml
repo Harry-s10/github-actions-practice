@@ -35,8 +35,8 @@ jobs:
             - name: Run tests
               run: uv run pytest --html=report.html
 
-            - name: upload artifacts
-              uses: action/upload-artifacts@v7.0.2
+            - name: Upload a Build Artifact
+              uses: actions/upload-artifact@v7.0.1
               if: always()
               with:
                   name: test-reports-${{ steps.build.output.tag }}
