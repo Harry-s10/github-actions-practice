@@ -34,7 +34,7 @@ jobs:
             matrix:
                 python-version: ['3.12', '3.13', '3.14']
         steps:
-            - uses: action/checkout@v7.0.0
+            - uses: actions/checkout@v7.0.0
 
             - name: setup runner environment
               uses: ./.github/actions/setup-python-env
