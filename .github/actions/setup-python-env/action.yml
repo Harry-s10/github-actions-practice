@@ -11,9 +11,6 @@ inputs:
 runs:
     using: composite
     steps:
-        - name: checkout
-          uses: actions/checkout@v7.0.0
-
         - name: install uv
           uses: astral-sh/setup-uv@v8.2.0
           with:
