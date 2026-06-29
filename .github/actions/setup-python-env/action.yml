@@ -16,7 +16,7 @@ runs:
           with:
               enable-caching: true
               cache-dependency-glob: 'uv.lock'
-              python-version: ${{ input.python_version }}
+              python-version: ${{ inputs.python_version }}
 
         - name: Install dependencies
           shell: bash
