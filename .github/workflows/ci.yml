@@ -10,9 +10,9 @@ env:
 jobs:
     test:
         runs-on: ubuntu-latest
-        # strategy:
-        #     matrix:
-        #         python-version: ['3.12', '3.13', '3.14']
+        strategy:
+            matrix:
+                python-version: ['3.12', '3.13', '3.14']
         env:
             LOG_LEVEL: debug
 
@@ -23,7 +23,7 @@ jobs:
             - name: Create the runner
               uses: ./.github/actions/setup-python-env
               with:
-                  python-version: '3.14'
+                  python-version: ${{ matrix.python-version }}
 
             - name: Generate build tag
               id: build
