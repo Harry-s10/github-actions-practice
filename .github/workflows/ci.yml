@@ -9,7 +9,7 @@ env:
 
 jobs:
     test:
-        uses: Harry-s10/central-workflow/.github/workflows/reusable-test.yml@main
+        uses: ./.github/workflows/reusable-test.yml
         with:
             python-version: '3.14'
         secrets: inherit
