@@ -18,9 +18,9 @@ jobs:
 
         steps:
             - name: Create the runner
-              uses: ./.github/actions/setup-python-env/action.yml
+              uses: ./.github/actions/setup-python-env
               with:
-                  python-version: ${{ matrix.python-version }}
+                  python-version: '3.14'
 
             - name: Generate build tag
               id: build
