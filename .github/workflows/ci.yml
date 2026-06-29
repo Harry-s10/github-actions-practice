@@ -10,41 +10,10 @@ env:
 
 jobs:
     test:
-        runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                python-version: ['3.12', '3.13', '3.14']
-        env:
-            LOG_LEVEL: debug
-
-        steps:
-            - uses: actions/checkout@v5
-
-            - name: Install uv
-              uses: astral-sh/setup-uv@v5
-              with:
-                  enable-caching: true
-                  cache-dependency-glob: 'uv.lock'
-                  python-version: ${{ matrix.python-version }}
-
-            - name: Install dependencies
-              run: uv sync --all-extras --dev
-
-            - name: Generate build tag
-              id: build
-              run: echo "tag=build-${{ github.sha }}" >> $GITHUB_OUTPUT
-
-            - name: Run tests
-              env:
-                  PYTHONPATH: src
-              run: uv run pytest --html=report.html
-
-            - name: Upload test report
-              uses: actions/upload-artifact@v4
-              if: always()
-              with:
-                  name: test-report-${{ steps.build.outputs.tag }}
-                  path: report.html
+        uses: Harry-s10/central-workflow/.github/workflows/reusable-test.yml
+        with:
+            python-version: '3.14'
+        secrets: inherit
 
     deploy-staging:
         runs-on: ubuntu-latest

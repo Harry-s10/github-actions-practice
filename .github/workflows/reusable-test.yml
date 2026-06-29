@@ -1,0 +1,32 @@
+# .github/workflows/reusable-test.yml
+
+name: Reusable Python CI
+
+on:
+    workflow_call:
+        inputs:
+            python-version:
+                type: string
+                default: '3.12'
+        secrets:
+            DEPLOY_KEY:
+                required: false
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v7.0.0
+
+            - name: Install uv
+              uses: astral-sh/setup-uv@v.8.2.0
+              with:
+                  enable-caching: true
+                  cache-dependency-glob: 'uv.lock'
+                  python-version: ${{ inputs.python-version }}
+
+            - name: Install dependency
+              run: uv sync --all-extras --dev
+
+            - name: Run tests
+              run: uv run pytest
