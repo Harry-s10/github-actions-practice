@@ -21,7 +21,7 @@ jobs:
             - name: generate tag
               id: build
               run: echo "tag=build-${{ github.sha }}" >> $GITHUB_OUTPUT
-            
+
             - name: install uv
               uses: astral-sh/setup-uv@v8.2.0
               with:
@@ -39,5 +39,5 @@ jobs:
               uses: action/upload-artifacts@v7.0.2
               if: always()
               with:
-                   name: test-reports-${{ step.build.output.tag }}
-                   path: report.html
+                  name: test-reports-${{ steps.build.output.tag }}
+                  path: report.html
