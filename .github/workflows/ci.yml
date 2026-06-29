@@ -10,9 +10,9 @@ env:
 jobs:
     test:
         runs-on: ubuntu-latest
-        # strategy:
-        #     matrix:
-        #         python-version: ['3.12', '3.13', '3.14']
+        strategy:
+            matrix:
+                python-version: ['3.12', '3.13', '3.14']
         # env:
         #     LOG_LEVEL: debug
 
@@ -20,23 +20,23 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v7.0.0
 
-            # - name: Create the runner
-            #   uses: ./.github/actions/setup-python-env
-            #   with:
-            #       python-version: ${{ matrix.python-version }}
+            - name: Create the runner
+              uses: ./.github/actions/setup-python-env
+              with:
+                  python-version: ${{ matrix.python-version }}
 
             # - name: Generate build tag
             #   id: build
             #   run: echo "tag=build-${{ github.sha }}" >> $GITHUB_OUTPUT
 
-            - name: install uv
-              uses: astral-sh/setup-uv@v8.2.0
-              with:
-                  enable-cache: true
-                  cache-dependency-glob: 'uv.lock'
+            # - name: install uv
+            #   uses: astral-sh/setup-uv@v8.2.0
+            #   with:
+            #       enable-cache: true
+            #       cache-dependency-glob: 'uv.lock'
 
-            - name: install dependencies
-              run: uv sync --all-extras --dev
+            # - name: install dependencies
+            #   run: uv sync --all-extras --dev
 
             - name: run ruff lint
               run: uv run ruff check .
@@ -47,15 +47,14 @@ jobs:
             - name: Run tests
               env:
                   PYTHONPATH: src
-              run: uv run pytest --html=report.html
+              run: uv run pytest --html=report.html --cov=src --cov-report=term-missing
 
-            # - name: Upload test report
-            #   uses: actions/upload-artifact@v7.0.1
-
-            #   if: always()
-            #   with:
-            #       name: test-report-${{ steps.build.outputs.tag }}
-            #       path: report.html
+            - name: Upload test report
+              uses: actions/upload-artifact@v7.0.1
+              if: always()
+              with:
+                  name: test-report-${{ matrix.python-version }}-${{ steps.build.outputs.tag }}
+                  path: report.html
 
     deploy-staging:
         runs-on: ubuntu-latest
