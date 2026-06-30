@@ -1,0 +1,22 @@
+name: PR Greeting
+
+on:
+    pull_request_target:
+        types:
+            - opened
+
+permissions:
+    pull-requests: write
+
+jobs:
+    greet:
+        runs-on: ubuntu-latest
+        steps:
+            - name: comment on PR
+              run: |
+                  gh pr comment ${{ github.event.pull_request.number }} \
+                  --repo ${{ github.repository }} \
+                  --body "Thanks for the contribution, @${{ github.actor }}! A maintainer will review this soon."
+
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
