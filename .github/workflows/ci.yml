@@ -10,6 +10,7 @@ env:
 jobs:
     lint:
         runs-on: ubuntu-latest
+        timeout-minutes: 3
         steps:
             - uses: actions/checkout@v7.0.0
 
@@ -29,6 +30,7 @@ jobs:
               run: uv run ruff format --check .
     test:
         runs-on: ubuntu-latest
+        timeout-minutes: 10
         strategy:
             fail-fast: false
             matrix:
@@ -52,6 +54,7 @@ jobs:
                   path: report.html
     build:
         runs-on: ubuntu-latest
+        timeout-minutes: 15
         needs: [lint, test]
         permissions:
             contents: read
@@ -80,6 +83,7 @@ jobs:
                   tags: ${{ steps.image.outputs.name }}:${{ github.sha }}
     deploy-staging:
         runs-on: ubuntu-latest
+        timeout-minutes: 5
         needs: build
         environment: staging
         concurrency:
