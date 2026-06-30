@@ -1,0 +1,23 @@
+#.github/actions/setup-python-env/action.yml
+
+name: Setup a Python environment
+description: Install uv and project dependencies
+
+inputs:
+    python-version:
+        description: Python version to use
+        default: '3.14'
+
+runs:
+    using: composite
+    steps:
+        - name: install uv
+          uses: astral-sh/setup-uv@v8.2.0
+          with:
+              enable-cache: true
+              cache-dependency-glob: 'uv.lock'
+              python-version: ${{ inputs.python_version }}
+
+        - name: Install dependencies
+          shell: bash
+          run: uv sync --all-extras --dev
